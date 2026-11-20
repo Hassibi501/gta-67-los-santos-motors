@@ -1,35 +1,32 @@
 package com.losantos.models;
 
-import java.time.LocalDate;
-
+import java.time.Year;
 /**
  * MISSION 3: Calculate the lease amount and its 36-month payment.
  */
 public class LeaseContract extends Contract {
     public LeaseContract(String date, String customerName, String customerEmail, Vehicle vehicle) {
-        super(date, customerName, customerEmail, vehicle);
+        super(date, customerName, customerEmail, requireEligibleVehicle(vehicle));
     }
 
+    @Override
+    public void setVehicle(Vehicle vehicle) {
+        super.setVehicle(requireEligibleVehicle(vehicle));
 
-}
+    }
 
     public double getExpectedEndingValue() {
         return getVehicle().getPrice() * 0.50;
     }
+
     public double getLeaseFee() {
         return getVehicle().getPrice() * 0.07;
     }
 
     @Override
     public double getTotalPrice() {
-        // TODO: price - 50% expected ending value + 7% lease fee.
-        // Total Lease Amount Formula:
-        // Total Lease Amount = Vehicle Price - Expected Ending Value + Lease Fee
-        if (isNotLeaseEligible()) System.exit(-1);
-
         double originalVehiclePrice = getVehicle().getPrice();
         return (originalVehiclePrice - getExpectedEndingValue()) + getLeaseFee();
-
     }
 
     @Override
@@ -51,19 +48,16 @@ public class LeaseContract extends Contract {
         return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months)); // monthly payment
     }
 
-    private boolean isNotLeaseEligible() {
-        // TODO: Vehicles older than three years cannot be leased. Before creating the contract, compare the vehicle's model year with the current year.
-        LocalDate localDate = LocalDate.now();
-        int currentYear = localDate.getYear();
-        int vehicleOriginYear = super.getVehicle().getYear();
+    private static Vehicle requireEligibleVehicle(Vehicle vehicle) {
+        int currentYear = Year.now().getValue();
+        int vehicleAge = currentYear - vehicle.getYear();
 
-        int currentVehicleAge = currentYear - vehicleOriginYear;
-
-        if (vehicleOriginYear < 3) {
-            System.err.println("ERROR: Vehicle is too old for leasing.\nOnly vehicles up to 3 years old are eligible.");
-            return true;
+        if (vehicleAge > 3) {
+            throw new IllegalArgumentException(
+                    "Only vehicles up to 3 model years old are eligible for leasing.");
         }
 
-        return false;
+        return vehicle;
+
     }
 }
