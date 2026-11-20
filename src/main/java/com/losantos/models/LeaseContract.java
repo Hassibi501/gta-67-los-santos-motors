@@ -10,22 +10,26 @@ public class LeaseContract extends Contract {
         super(date, customerName, customerEmail, vehicle);
     }
 
+
+}
+
+    public double getExpectedEndingValue() {
+        return getVehicle().getPrice() * 0.50;
+    }
+    public double getLeaseFee() {
+        return getVehicle().getPrice() * 0.07;
+    }
+
     @Override
     public double getTotalPrice() {
         // TODO: price - 50% expected ending value + 7% lease fee.
         // Total Lease Amount Formula:
         // Total Lease Amount = Vehicle Price - Expected Ending Value + Lease Fee
-
         if (isNotLeaseEligible()) System.exit(-1);
 
-        double originalVehiclePrice = super.getVehicle().getPrice();
+        double originalVehiclePrice = getVehicle().getPrice();
+        return (originalVehiclePrice - getExpectedEndingValue()) + getLeaseFee();
 
-        double expectedEndingValue = originalVehiclePrice * 0.50;
-
-        double leaseFee = originalVehiclePrice * 0.07;
-
-
-        return (originalVehiclePrice - expectedEndingValue) + leaseFee;
     }
 
     @Override
