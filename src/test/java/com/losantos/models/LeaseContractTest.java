@@ -47,9 +47,13 @@ public class LeaseContractTest {
             lease.setVehicle(tooOld);
             throw new AssertionError("The lease accepted an ineligible replacement vehicle.");
         } catch (IllegalArgumentException expected) {
-            System.out.println("PASS: Rejected an ineligible replacement vehicle.");
+            if (lease.getVehicle() != eligibleVehicle) {
+                throw new AssertionError("The lease lost its original vehicle.");
+            }
+            System.out.println("PASS: Rejected the replacement and kept the original vehicle.");
         }
-            System.out.println("All lease contract checks passed.");
+
+        System.out.println("All lease contract checks passed.");
     }
 
     private static void checkAmount(String label, double expected, double actual) {
