@@ -30,11 +30,6 @@ public class LeaseContract extends Contract {
 
     @Override
     public double getMonthlyPayment() {
-        // TODO: amortize getTotalPrice() at 4% annual interest over 36 months.
-        if (isNotLeaseEligible()) System.exit(-1);
-
-        double originalVehiclePrice = super.getVehicle().getPrice();
-
          /*
           Standard Loan Payment Formula:
           M = P * r / (1 - (1 + r)^(-n))
@@ -46,12 +41,8 @@ public class LeaseContract extends Contract {
          */
 
         double principal = getTotalPrice();
-
-        double vehiclePrice = super.getVehicle().getPrice();
-        double annualInterestRate = 0.04 / 12;
+        double monthlyRate = 0.04 / 12.0;
         int months = 36;
-
-        double monthlyRate = annualInterestRate / 12.0;
 
         return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months)); // monthly payment
     }
