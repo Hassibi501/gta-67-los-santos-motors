@@ -2,9 +2,6 @@ package com.losantos.models;
 
 /**
  * MISSION 2: Calculate tax, fees, and optional financed monthly payments.
- * <p>
- * Hint: Vehicle data isn't stored directly on SalesContract—check the parent
- * class (Contract) to see how to access the vehicle and its price.
  */
 public class SalesContract extends Contract {
     private boolean finance;
@@ -25,12 +22,14 @@ public class SalesContract extends Contract {
 
     @Override
     public double getTotalPrice() {
-        // TODO: Look up the vehicle price via the superclass and add:
-        //   - 5% sales tax
-        //   - $100 recording fee
-        //   - processing fee ($295 under $10,000, otherwise $495)
-        // Hint: Keep tax separate from base vehicle price so you don't double-count it.
-        throw new UnsupportedOperationException("TODO: implement getTotalPrice()");
+        double vehiclePrice = super.getVehicle().getPrice();
+
+        double salesTax = vehiclePrice * 1.05;
+        double recordingFee = 100;
+
+        double processingFee = (vehiclePrice < 10_000) ? 295 : 495;
+
+        return salesTax + recordingFee + processingFee;
     }
 
     @Override
@@ -45,11 +44,23 @@ public class SalesContract extends Contract {
           ● n = number of monthly payments
          */
 
-        // TODO: If the contract is not financed, return 0.
-        // TODO: Otherwise, amortize getTotalPrice() using the rate and term
-        //       tier based on vehicle price (check Contract for the vehicle getter).
-        // Hint: Convert annual percentage rates to a decimal monthly rate before
-        //       using Math.pow(...).
-        throw new UnsupportedOperationException("TODO: implement getMonthlyPayment()");
+        if (!this.finance) return 0;
+
+        double principal = getTotalPrice();
+
+        double vehiclePrice = super.getVehicle().getPrice();
+        double annualInterestRate;
+        int months;
+
+        if (vehiclePrice < 10_000) {
+            annualInterestRate = 5.25 / 100;
+            months = 24;
+        } else {
+            annualInterestRate = 4.25 / 100;
+            months = 48;
+        }
+        double monthlyRate = annualInterestRate / 12.0;
+
+        return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months)); // monthly payment
     }
 }
