@@ -42,7 +42,14 @@ public class LeaseContractTest {
             System.out.println("PASS: Vehicle four model years old was rejected.");
         }
 
-        System.out.println("All lease contract checks passed.");
+            // new test
+        try {
+            lease.setVehicle(tooOld);
+            throw new AssertionError("The lease accepted an ineligible replacement vehicle.");
+        } catch (IllegalArgumentException expected) {
+            System.out.println("PASS: Rejected an ineligible replacement vehicle.");
+        }
+            System.out.println("All lease contract checks passed.");
     }
 
     private static void checkAmount(String label, double expected, double actual) {
